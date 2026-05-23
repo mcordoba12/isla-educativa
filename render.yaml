@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: isla-educativa
+    env: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_SUPABASE_URL
+        scope: build
+        value: ${VITE_SUPABASE_URL}
+      - key: VITE_SUPABASE_ANON_KEY
+        scope: build
+        value: ${VITE_SUPABASE_ANON_KEY}
+      - key: NODE_ENV
+        value: production
+      - key: VITE_ENV
+        value: production
