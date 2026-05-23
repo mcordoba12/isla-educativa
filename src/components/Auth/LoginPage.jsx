@@ -1,21 +1,25 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuthContext } from '../../context/AuthContext'
+import '../Auth/LoginRegisterStyles.css'
 
 export function LoginPage() {
   const navigate = useNavigate()
   const { login, loading, error } = useAuthContext()
+  const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
+    recordarme: false
   })
   const [localError, setLocalError] = useState(null)
+  const [rol, setRol] = useState('estudiante')
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value, type, checked } = e.target
     setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }))
     setLocalError(null)
   }
@@ -38,70 +42,168 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-blue-50 flex items-center justify-center px-4">
-      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
-        <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">
-          Isla Educativa
-        </h1>
-        <p className="text-center text-gray-600 mb-8">
-          Come Dispersión te espera
-        </p>
+    <div className="login-container">
+      {/* Fondo animado */}
+      <div className="ocean-background">
+        <div className="sky"></div>
 
-        {(error || localError) && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
-            {error || localError}
-          </div>
-        )}
+        {/* Nubes */}
+        <div className="cloud cloud-1"></div>
+        <div className="cloud cloud-2"></div>
+        <div className="cloud cloud-3"></div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="tu@email.com"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              disabled={loading}
-            />
-          </div>
+        {/* Sol */}
+        <div className="sun">
+          <div className="sun-rays"></div>
+        </div>
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              Contraseña
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="••••••••"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              disabled={loading}
-            />
-          </div>
+        {/* Palmeras */}
+        <div className="palm palm-left">
+          <div className="palm-trunk"></div>
+          <div className="palm-leaves"></div>
+        </div>
+        <div className="palm palm-right">
+          <div className="palm-trunk"></div>
+          <div className="palm-leaves"></div>
+        </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
-          </button>
-        </form>
+        {/* Bote */}
+        <div className="boat"></div>
 
-        <p className="text-center text-gray-600 mt-6 text-sm">
-          ¿No tienes cuenta?{' '}
-          <Link to="/register" className="text-primary-600 hover:text-primary-700 font-semibold">
-            Regístrate aquí
-          </Link>
-        </p>
+        {/* Olas */}
+        <div className="wave wave-1"></div>
+        <div className="wave wave-2"></div>
+        <div className="wave wave-3"></div>
+
+        {/* Arena */}
+        <div className="sand"></div>
       </div>
+
+      {/* Tarjeta */}
+      <div className="card">
+        {/* Personaje arriba */}
+        <div className="character-container">
+          <img
+            src="/src/assets/images/cookie-normal.png"
+            alt="Come Dispersión"
+            className="character bounce-soft"
+          />
+        </div>
+
+        {/* Contenido */}
+        <div className="card-content">
+          <p className="subtitle">APP EDUCATIVA</p>
+          <h1 className="title">
+            Isla <span className="title-accent">Educativa</span>
+          </h1>
+          <p className="description">¡Navegemos juntos hacia el aprendizaje!</p>
+
+          {/* Selector de rol */}
+          <div className="role-toggle">
+            <button
+              type="button"
+              className={`role-btn ${rol === 'docente' ? 'active' : ''}`}
+              onClick={() => setRol('docente')}
+            >
+              🎓 Soy Docente
+            </button>
+            <button
+              type="button"
+              className={`role-btn ${rol === 'estudiante' ? 'active' : ''}`}
+              onClick={() => setRol('estudiante')}
+            >
+              📋 Soy Estudiante
+            </button>
+          </div>
+
+          {/* Errores */}
+          {(error || localError) && (
+            <div className="error-message">
+              {error || localError}
+            </div>
+          )}
+
+          {/* Formulario */}
+          <form onSubmit={handleSubmit} className="login-form">
+            <div className="form-group">
+              <label htmlFor="email">CORREO</label>
+              <div className="input-wrapper">
+                <span className="input-icon">✉️</span>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="marina@miescuela.edu"
+                  disabled={loading}
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="password">CONTRASEÑA</label>
+              <div className="input-wrapper">
+                <span className="input-icon">🔒</span>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  disabled={loading}
+                />
+                <button
+                  type="button"
+                  className="toggle-password"
+                  onClick={() => setShowPassword(!showPassword)}
+                  disabled={loading}
+                >
+                  {showPassword ? '👁️' : '👁️‍🗨️'}
+                </button>
+              </div>
+            </div>
+
+            <div className="form-checkbox">
+              <input
+                type="checkbox"
+                id="recordarme"
+                name="recordarme"
+                checked={formData.recordarme}
+                onChange={handleChange}
+              />
+              <label htmlFor="recordarme">Recuérdame</label>
+              <Link to="#" className="forgot-password">
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-primary"
+            >
+              {loading ? 'Iniciando sesión...' : '⚓ ¡Zarpar a la isla!'}
+            </button>
+          </form>
+
+          <div className="divider">o</div>
+
+          <p className="switch-auth">
+            ¿Aún no tienes cuenta?{' '}
+            <Link to="/register" className="link-register">
+              Crea tu pasaporte
+            </Link>
+          </p>
+        </div>
+      </div>
+
+      {/* Elementos decorativos */}
+      <div className="decoration decoration-1">🎓 +120 misiones</div>
+      <div className="decoration decoration-2">🏆 24 islas</div>
+      <div className="decoration decoration-3">⛵ Clase en vivo</div>
+      <div className="decoration decoration-4">🎁 Premios diarios</div>
     </div>
   )
 }

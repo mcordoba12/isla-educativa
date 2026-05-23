@@ -2,49 +2,30 @@ import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuthContext } from '../../context/AuthContext'
 import { supabase } from '../../services/supabaseClient'
+import './LoginRegisterStyles.css'
 
 export function RegisterPage() {
   const navigate = useNavigate()
   const { register, loading, error } = useAuthContext()
-  const [docentes, setDocentes] = useState([])
-  const [cargandoDocentes, setCargandoDocentes] = useState(true)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [rol, setRol] = useState('estudiante')
   const [formData, setFormData] = useState({
+    nombre: '',
+    apellido: '',
     email: '',
     password: '',
     confirmPassword: '',
-    nombreCompleto: '',
-    rol: 'estudiante',
-    docenteId: ''
+    codigoClase: '',
+    terminosAceptados: false
   })
   const [localError, setLocalError] = useState(null)
 
-  useEffect(() => {
-    // Cargar lista de docentes
-    const cargarDocentes = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('users')
-          .select('id, nombre_completo')
-          .eq('rol', 'docente')
-          .order('nombre_completo')
-
-        if (error) throw error
-        setDocentes(data || [])
-      } catch (err) {
-        console.error('Error cargando docentes:', err)
-      } finally {
-        setCargandoDocentes(false)
-      }
-    }
-
-    cargarDocentes()
-  }, [])
-
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value, type, checked } = e.target
     setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }))
     setLocalError(null)
   }
@@ -54,7 +35,7 @@ export function RegisterPage() {
     setLocalError(null)
 
     // Validaciones
-    if (!formData.email || !formData.password || !formData.nombreCompleto) {
+    if (!formData.nombre || !formData.apellido || !formData.email || !formData.password) {
       setLocalError('Por favor completa todos los campos requeridos')
       return
     }
@@ -69,33 +50,24 @@ export function RegisterPage() {
       return
     }
 
-    if (formData.rol === 'estudiante' && !formData.docenteId) {
-      setLocalError('Debes seleccionar un docente')
+    if (rol === 'estudiante' && !formData.codigoClase) {
+      setLocalError('Debes ingresar el código de tu clase')
+      return
+    }
+
+    if (!formData.terminosAceptados) {
+      setLocalError('Debes aceptar los términos y privacidad')
       return
     }
 
     try {
+      const nombreCompleto = `${formData.nombre} ${formData.apellido}`
       await register(
         formData.email,
         formData.password,
-        formData.rol,
-        formData.nombreCompleto
+        rol,
+        nombreCompleto
       )
-
-      // Si es estudiante, vincular con docente
-      if (formData.rol === 'estudiante' && formData.docenteId) {
-        const {
-          data: { user }
-        } = await supabase.auth.getUser()
-
-        if (user) {
-          await supabase.from('teacher_students').insert({
-            docente_id: formData.docenteId,
-            estudiante_id: user.id
-          })
-        }
-      }
-
       navigate('/dashboard')
     } catch (err) {
       setLocalError(err.message || 'Error al registrarse')
@@ -103,150 +75,236 @@ export function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-blue-50 flex items-center justify-center px-4 py-8">
-      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
-        <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">
-          Regístrate
-        </h1>
-        <p className="text-center text-gray-600 mb-8">
-          Únete a la Isla Educativa
-        </p>
+    <div className="login-container">
+      {/* Fondo animado */}
+      <div className="ocean-background">
+        <div className="sky"></div>
+        <div className="cloud cloud-1"></div>
+        <div className="cloud cloud-2"></div>
+        <div className="cloud cloud-3"></div>
+        <div className="sun">
+          <div className="sun-rays"></div>
+        </div>
+        <div className="palm palm-left">
+          <div className="palm-trunk"></div>
+          <div className="palm-leaves"></div>
+        </div>
+        <div className="palm palm-right">
+          <div className="palm-trunk"></div>
+          <div className="palm-leaves"></div>
+        </div>
+        <div className="boat"></div>
+        <div className="wave wave-1"></div>
+        <div className="wave wave-2"></div>
+        <div className="wave wave-3"></div>
+        <div className="sand"></div>
+      </div>
 
-        {(error || localError) && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
-            {error || localError}
-          </div>
-        )}
+      {/* Tarjeta */}
+      <div className="card card-register">
+        {/* Personaje */}
+        <div className="character-container">
+          <img
+            src="/src/assets/images/cookie-normal.png"
+            alt="Come Dispersión"
+            className="character bounce-soft"
+          />
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="nombreCompleto" className="block text-sm font-medium text-gray-700 mb-1">
-              Nombre completo
-            </label>
-            <input
-              type="text"
-              id="nombreCompleto"
-              name="nombreCompleto"
-              value={formData.nombreCompleto}
-              onChange={handleChange}
-              placeholder="Tu nombre"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              disabled={loading}
-            />
-          </div>
+        {/* Contenido */}
+        <div className="card-content">
+          <p className="subtitle">APP EDUCATIVA</p>
+          <h1 className="title">
+            Isla <span className="title-accent">Educativa</span>
+          </h1>
+          <p className="description">
+            Diseña tu pasaporte y empieza la aventura.
+          </p>
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="tu@email.com"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              disabled={loading}
-            />
-          </div>
+          {/* Botón volver */}
+          <Link to="/login" className="btn-back">
+            ← Volver al acceso
+          </Link>
 
-          <div>
-            <label htmlFor="rol" className="block text-sm font-medium text-gray-700 mb-1">
-              ¿Eres...?
-            </label>
-            <select
-              id="rol"
-              name="rol"
-              value={formData.rol}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              disabled={loading}
+          {/* Selector de rol */}
+          <div className="role-toggle">
+            <button
+              type="button"
+              className={`role-btn ${rol === 'docente' ? 'active' : ''}`}
+              onClick={() => setRol('docente')}
             >
-              <option value="estudiante">Estudiante</option>
-              <option value="docente">Docente</option>
-            </select>
+              🎓 Soy Docente
+            </button>
+            <button
+              type="button"
+              className={`role-btn ${rol === 'estudiante' ? 'active' : ''}`}
+              onClick={() => setRol('estudiante')}
+            >
+              📋 Soy Estudiante
+            </button>
           </div>
 
-          {formData.rol === 'estudiante' && (
-            <div>
-              <label htmlFor="docenteId" className="block text-sm font-medium text-gray-700 mb-1">
-                Selecciona tu docente
-              </label>
-              {cargandoDocentes ? (
-                <div className="text-gray-600 text-sm">Cargando docentes...</div>
-              ) : docentes.length > 0 ? (
-                <select
-                  id="docenteId"
-                  name="docenteId"
-                  value={formData.docenteId}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  disabled={loading}
-                >
-                  <option value="">-- Selecciona un docente --</option>
-                  {docentes.map((doc) => (
-                    <option key={doc.id} value={doc.id}>
-                      {doc.nombre_completo}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <div className="text-gray-600 text-sm">
-                  No hay docentes disponibles. Contacta al administrador.
-                </div>
-              )}
+          {/* Errores */}
+          {(error || localError) && (
+            <div className="error-message">
+              {error || localError}
             </div>
           )}
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              Contraseña
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="••••••••"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+          {/* Formulario */}
+          <form onSubmit={handleSubmit} className="login-form">
+            {/* Nombre y Apellido */}
+            <div className="form-row">
+              <div className="form-group" style={{ flex: 1 }}>
+                <label htmlFor="nombre">NOMBRE</label>
+                <div className="input-wrapper">
+                  <span className="input-icon">👤</span>
+                  <input
+                    type="text"
+                    id="nombre"
+                    name="nombre"
+                    value={formData.nombre}
+                    onChange={handleChange}
+                    placeholder="Marina"
+                    disabled={loading}
+                  />
+                </div>
+              </div>
+              <div className="form-group" style={{ flex: 1 }}>
+                <label htmlFor="apellido">APELLIDO</label>
+                <div className="input-wrapper">
+                  <span className="input-icon">👤</span>
+                  <input
+                    type="text"
+                    id="apellido"
+                    name="apellido"
+                    value={formData.apellido}
+                    onChange={handleChange}
+                    placeholder="Pérez"
+                    disabled={loading}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Email */}
+            <div className="form-group">
+              <label htmlFor="email">CORREO</label>
+              <div className="input-wrapper">
+                <span className="input-icon">✉️</span>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="tu@correo.com"
+                  disabled={loading}
+                />
+              </div>
+            </div>
+
+            {/* Contraseña y Repetir */}
+            <div className="form-row">
+              <div className="form-group" style={{ flex: 1 }}>
+                <label htmlFor="password">CONTRASEÑA</label>
+                <div className="input-wrapper">
+                  <span className="input-icon">🔒</span>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="••••••••"
+                    disabled={loading}
+                  />
+                  <button
+                    type="button"
+                    className="toggle-password"
+                    onClick={() => setShowPassword(!showPassword)}
+                    disabled={loading}
+                  >
+                    {showPassword ? '👁️' : '👁️‍🗨️'}
+                  </button>
+                </div>
+              </div>
+              <div className="form-group" style={{ flex: 1 }}>
+                <label htmlFor="confirmPassword">REPETIR</label>
+                <div className="input-wrapper">
+                  <span className="input-icon">🔒</span>
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    placeholder="••••••••"
+                    disabled={loading}
+                  />
+                  <button
+                    type="button"
+                    className="toggle-password"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    disabled={loading}
+                  >
+                    {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Código de clase (solo estudiantes) */}
+            {rol === 'estudiante' && (
+              <div className="form-group">
+                <label htmlFor="codigoClase">CÓDIGO DE TU CLASE</label>
+                <div className="input-wrapper">
+                  <span className="input-icon">🏫</span>
+                  <input
+                    type="text"
+                    id="codigoClase"
+                    name="codigoClase"
+                    value={formData.codigoClase}
+                    onChange={handleChange}
+                    placeholder="ISLA-4B-2026"
+                    disabled={loading}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Términos */}
+            <div className="form-terms">
+              <input
+                type="checkbox"
+                id="terminosAceptados"
+                name="terminosAceptados"
+                checked={formData.terminosAceptados}
+                onChange={handleChange}
+                disabled={loading}
+              />
+              <label htmlFor="terminosAceptados">
+                Acepto los <Link to="#" className="link-terms">términos</Link> y la{' '}
+                <Link to="#" className="link-terms">privacidad</Link> de la isla.
+              </label>
+            </div>
+
+            <button
+              type="submit"
               disabled={loading}
-            />
-          </div>
-
-          <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-              Confirma tu contraseña
-            </label>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              placeholder="••••••••"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              disabled={loading}
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? 'Registrando...' : 'Crear cuenta'}
-          </button>
-        </form>
-
-        <p className="text-center text-gray-600 mt-6 text-sm">
-          ¿Ya tienes cuenta?{' '}
-          <Link to="/login" className="text-primary-600 hover:text-primary-700 font-semibold">
-            Inicia sesión aquí
-          </Link>
-        </p>
+              className="btn-primary"
+            >
+              {loading ? 'Creando cuenta...' : '✚ Crear mi pasaporte'}
+            </button>
+          </form>
+        </div>
       </div>
+
+      {/* Decoraciones */}
+      <div className="decoration decoration-1">🎓 +120 misiones</div>
+      <div className="decoration decoration-2">🏆 24 islas</div>
+      <div className="decoration decoration-3">⛵ Clase en vivo</div>
+      <div className="decoration decoration-4">🎁 Premios diarios</div>
     </div>
   )
 }
