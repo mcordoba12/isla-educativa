@@ -11,5 +11,16 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: false,
     minify: 'terser'
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./src/tests/setup.js'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      include: ['src/**/*.{js,jsx}'],
+      exclude: ['src/tests/**', 'src/main.jsx', 'node_modules/']
+    }
   }
 })

@@ -245,14 +245,31 @@ function TextField({ label, type = "text", value, onChange, placeholder, icon, e
   );
 }
 
-// ─── Modal para recuperar contraseña ────────────────────────────────────────
+// ─── Validar contraseña ────────────────────────────────────────────────────────
+function validatePassword(pw) {
+  if (!pw) return "Escribe tu nueva contraseña";
+  if (pw.length < 8) return "Mínimo 8 caracteres";
+  if (!/[A-Z]/.test(pw)) return "Necesita al menos una mayúscula";
+  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pw)) return "Necesita al menos un carácter especial";
+  return "";
+}
+
+// ─── Modal para recuperar contraseña (2 pasos) ──────────────────────────────────
 function ForgotPasswordModal({ onClose, onSubmit, isLoading }) {
+  const [step, setStep] = useState(1);
   const [email, setEmail] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [resetPin, setResetPin] = useState("");
+  const [userPin, setUserPin] = useState("");
+  const [newPw, setNewPw] = useState("");
+  const [confirmPw, setConfirmPw] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [userId, setUserId] = useState(null);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // PASO 1: Verificar identidad
+  const handleVerifyIdentity = async () => {
+    console.log("[ForgotPassword] ✓✓✓ handleVerifyIdentity ejecutado");
     setError("");
 
     if (!email) {
@@ -263,23 +280,149 @@ function ForgotPasswordModal({ onClose, onSubmit, isLoading }) {
       setError("Correo no válido");
       return;
     }
+    if (!fullName.trim()) {
+      setError("Escribe tu nombre completo");
+      return;
+    }
 
     try {
-      await onSubmit?.(email);
-      setSuccess(true);
-      setTimeout(() => onClose?.(), 3000);
+      console.log("[ForgotPassword] ========================================");
+      console.log("[ForgotPassword] PASO 1: Verificar identidad");
+      console.log("[ForgotPassword] Email a buscar:", email);
+      console.log("[ForgotPassword] Nombre a buscar:", fullName.trim());
+
+      // Primero, traer TODOS los usuarios para debugging
+      console.log("[ForgotPassword] Listando TODOS los usuarios de BD...");
+      const { data: allUsers, error: allError } = await supabase
+        .from("users")
+        .select("id, email, nombre_completo");
+
+      if (allUsers) {
+        console.log("[ForgotPassword] Usuarios en BD:");
+        allUsers.forEach(u => {
+          console.log(`  - Email: "${u.email}" | Nombre: "${u.nombre_completo}"`);
+        });
+      }
+
+      // Ahora buscar el usuario específico con búsqueda flexible
+      const { data, error: queryError } = await supabase
+        .from("users")
+        .select("id")
+        .ilike("email", `%${email}%`)
+        .ilike("nombre_completo", `%${fullName.trim()}%`)
+        .single();
+
+      console.log("[ForgotPassword] Respuesta de Supabase:");
+      console.log("[ForgotPassword] Data:", data);
+      console.log("[ForgotPassword] Error:", queryError);
+
+      if (queryError) {
+        console.error("[ForgotPassword] ❌ Error en consulta a BD:", queryError);
+        console.error("[ForgotPassword] Código de error:", queryError?.code);
+        console.error("[ForgotPassword] Mensaje:", queryError?.message);
+
+        // Mostrar error más descriptivo
+        if (queryError.code === 'PGRST116') {
+          setError("El usuario no existe. Verifica email y nombre completo.");
+        } else if (queryError.code === 'PGRST100') {
+          setError("Error de autenticación. Necesitas una política RLS.");
+        } else {
+          setError(`No encontramos esa cuenta. (Error: ${queryError.code})`);
+        }
+        return;
+      }
+
+      if (!data) {
+        console.error("[ForgotPassword] ❌ Usuario no encontrado");
+        setError("No encontramos esa cuenta. Verifica email y nombre completo.");
+        return;
+      }
+
+      console.log("[ForgotPassword] ✅ Usuario verificado: " + data.id);
+
+      // Generar PIN temporal de 6 dígitos
+      const pin = Math.floor(100000 + Math.random() * 900000).toString();
+      console.log("[ForgotPassword] PIN generado:", pin);
+
+      setUserId(data.id);
+      setResetPin(pin);
+      setStep(2);
     } catch (err) {
-      setError(err.message || "Error al enviar recuperación");
+      console.error("[ForgotPassword] ❌ Error detectando:", err);
+      setError(err.message || "Error al verificar identidad");
+    }
+  };
+
+  // PASO 2: Cambiar contraseña
+  const handleChangePassword = async () => {
+    setError("");
+
+    if (!userPin) {
+      setError("Copia el código de arriba y pégalo aquí");
+      return;
+    }
+
+    if (userPin !== resetPin) {
+      setError("Código de verificación incorrecto");
+      return;
+    }
+
+    if (!newPw) {
+      setError("Escribe tu nueva contraseña");
+      return;
+    }
+
+    const pwError = validatePassword(newPw);
+    if (pwError) {
+      setError(pwError);
+      return;
+    }
+
+    if (newPw !== confirmPw) {
+      setError("Las contraseñas nuevas no coinciden");
+      return;
+    }
+
+    try {
+      console.log("[ForgotPassword] Código verificado, cambiando contraseña para usuario:", userId);
+
+      // Llamar a Supabase Function para cambiar contraseña
+      const response = await fetch(
+        'https://zukvgusyfhwlawbsxtdi.functions.supabase.co/reset-password',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: userId,
+            password: newPw,
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        console.error("[ForgotPassword] Error de función:", result);
+        setError(result.error || "Error al cambiar contraseña");
+        return;
+      }
+
+      console.log("[ForgotPassword] ✅ Contraseña cambiada exitosamente");
+      setSuccess(true);
+      setTimeout(() => onClose?.(), 2500);
+    } catch (err) {
+      console.error("[ForgotPassword] Error:", err);
+      setError(err.message || "Error al cambiar contraseña");
     }
   };
 
   if (success) {
     return (
       <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[9999] p-4">
-        <div className="bg-[#FFFDF6] border-[3px] border-[#173951] rounded-2xl p-6 max-w-sm w-full text-center">
-          <div className="text-4xl mb-3">🌊</div>
-          <p className="text-[#173951] font-bold text-base mb-2">¡Revisa tu correo, aventurero!</p>
-          <p className="text-[#4E6B7E] text-sm">Te enviamos las instrucciones para recuperar tu contraseña</p>
+        <div className="bg-[#FFFDF6] border-[3px] border-[#173951] rounded-2xl p-8 max-w-sm w-full text-center shadow-xl">
+          <div className="text-5xl mb-4">🌊</div>
+          <p className="text-[#0E5C8A] font-bold text-[18px] mb-2">¡Contraseña actualizada!</p>
+          <p className="text-[#4E6B7E] text-sm">¡Aventurero, ya puedes zarpar con tu nueva contraseña!</p>
         </div>
       </div>
     );
@@ -287,35 +430,123 @@ function ForgotPasswordModal({ onClose, onSubmit, isLoading }) {
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[9999] p-4">
-      <div className="bg-[#FFFDF6] border-[3px] border-[#173951] rounded-2xl p-6 max-w-sm w-full">
-        <h3 className="font-[Fredoka] font-bold text-lg text-[#173951] mb-4">Recuperar contraseña</h3>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <TextField
-            label="Tu correo"
-            type="email"
-            icon="mail"
-            value={email}
-            onChange={setEmail}
-            placeholder="tu@correo.com"
-            error={error}
-          />
-          <div className="flex gap-2 mt-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 px-4 py-2 rounded-lg border-[2px] border-[#173951] text-[#173951] font-semibold hover:bg-gray-100 transition"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="flex-1 px-4 py-2 rounded-lg bg-[#1F8FCE] text-white font-semibold hover:bg-[#0E5C8A] disabled:opacity-60 transition"
-            >
-              {isLoading ? "Enviando..." : "Enviar"}
-            </button>
-          </div>
-        </form>
+      <div className="bg-[#FFFDF6] border-[3px] border-[#173951] rounded-2xl p-6 max-w-sm w-full shadow-xl">
+        <div className="flex items-center gap-2 mb-4">
+          <div className="flex-1 h-1.5 rounded-full" style={{
+            background: step === 1 ? "#1F8FCE" : "#E4F6FB",
+            transition: "all 0.3s ease"
+          }}/>
+          <div className="flex-1 h-1.5 rounded-full" style={{
+            background: step === 2 ? "#1F8FCE" : "#E4F6FB",
+            transition: "all 0.3s ease"
+          }}/>
+        </div>
+
+        {step === 1 ? (
+          <>
+            <h3 className="font-[Fredoka] font-bold text-lg text-[#173951] mb-2">Verificar identidad</h3>
+            <p className="text-[12px] text-[#4E6B7E] mb-4 font-semibold">PASO 1 de 2</p>
+            <div className="flex flex-col gap-3">
+              <TextField
+                label="Correo"
+                type="email"
+                icon="mail"
+                value={email}
+                onChange={setEmail}
+                placeholder="tu@correo.com"
+                error={error}
+              />
+              <TextField
+                label="Nombre completo"
+                type="text"
+                icon="user"
+                value={fullName}
+                onChange={setFullName}
+                placeholder="Tu nombre como lo registraste"
+              />
+              <div className="flex gap-2 mt-2">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="flex-1 px-4 py-2.5 rounded-lg border-[2.5px] border-[#173951] text-[#173951] font-bold text-sm hover:bg-[#F1ECDB] transition"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={handleVerifyIdentity}
+                  disabled={isLoading}
+                  className="flex-1 px-4 py-2.5 rounded-lg bg-[#1F8FCE] text-white font-bold text-sm hover:bg-[#0E5C8A] disabled:opacity-60 transition shadow-[0_3px_0_#0E5C8A]"
+                >
+                  {isLoading ? "Verificando..." : "Verificar identidad"}
+                </button>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <h3 className="font-[Fredoka] font-bold text-lg text-[#173951] mb-2">Nueva contraseña</h3>
+            <p className="text-[12px] text-[#4E6B7E] mb-4 font-semibold">PASO 2 de 2</p>
+
+            <div className="bg-[#E4F6FB] border-[2.5px] border-[#1F8FCE] rounded-lg p-3 mb-3">
+              <p className="text-[12px] font-bold text-[#0E5C8A] mb-1">🔐 Tu código de verificación:</p>
+              <p className="font-mono text-[24px] font-bold text-[#173951] tracking-wider text-center">{resetPin}</p>
+              <p className="text-[11px] text-[#4E6B7E] mt-1">Cópialo y pégalo abajo para continuar</p>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <TextField
+                label="Código de verificación"
+                type="text"
+                icon="lock"
+                value={userPin}
+                onChange={setUserPin}
+                placeholder="Copia el código de arriba"
+                error={error && error.includes("código") ? error : ""}
+              />
+              <TextField
+                label="Nueva contraseña"
+                type="password"
+                icon="lock"
+                value={newPw}
+                onChange={setNewPw}
+                placeholder="••••••••"
+                error={error && error.includes("nueva") ? error : ""}
+              />
+              <TextField
+                label="Confirmar nueva"
+                type="password"
+                icon="lock"
+                value={confirmPw}
+                onChange={setConfirmPw}
+                placeholder="••••••••"
+                error={error && error.includes("coinciden") ? error : ""}
+              />
+              <div className="bg-[#FFE0D6] border-[2px] border-[#FF8763] rounded-lg p-3 text-[11px] font-semibold text-[#C84B35] space-y-1">
+                <div>✓ Mínimo 8 caracteres</div>
+                <div>✓ Una mayúscula (A-Z)</div>
+                <div>✓ Un carácter especial (!@#$%...)</div>
+              </div>
+              <div className="flex gap-2 mt-2">
+                <button
+                  type="button"
+                  onClick={() => { setStep(1); setError(""); setNewPw(""); setConfirmPw(""); }}
+                  className="flex-1 px-4 py-2.5 rounded-lg border-[2.5px] border-[#173951] text-[#173951] font-bold text-sm hover:bg-[#F1ECDB] transition"
+                >
+                  Atrás
+                </button>
+                <button
+                  type="button"
+                  onClick={handleChangePassword}
+                  disabled={isLoading}
+                  className="flex-1 px-4 py-2.5 rounded-lg bg-[#2BA15C] text-white font-bold text-sm hover:bg-[#1B7A45] disabled:opacity-60 transition shadow-[0_3px_0_#1B7A45]"
+                >
+                  {isLoading ? "Cambiando..." : "Cambiar contraseña"}
+                </button>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
@@ -342,13 +573,19 @@ function LoginForm({ role, onGoRegister, onSubmit, isLoading }) {
     if (!Object.keys(next).length) onSubmit?.({ email, pw, remember, role });
   };
 
-  const handleForgotPassword = async (forgotEmail) => {
+  const handleForgotPassword = async ({ userId, password }) => {
     setForgotLoading(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail);
-      if (error) throw error;
+      console.log("[LoginForm] Cambiando contraseña para usuario:", userId);
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) {
+        console.error("[LoginForm] Error en updateUser:", error);
+        throw error;
+      }
+      console.log("[LoginForm] Contraseña cambiada exitosamente");
     } catch (err) {
-      throw new Error(err.message || "Error al enviar recuperación");
+      console.error("[LoginForm] Error:", err);
+      throw new Error(err.message || "Error al cambiar contraseña");
     } finally {
       setForgotLoading(false);
     }
@@ -463,7 +700,7 @@ function RegisterForm({ role, onBack, onSubmit, isLoading }) {
     e.preventDefault();
     const n = {};
     if (!nombre) n.nombre = "Falta el nombre";
-    if (!apellido) n.apellido = "Falta el apellido";
+    // Apellido es opcional
     if (!email) n.email = "Escribe tu correo";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) n.email = "Correo no válido";
     if (!pw) n.pw = "Crea una contraseña";
@@ -472,7 +709,6 @@ function RegisterForm({ role, onBack, onSubmit, isLoading }) {
       if (pwErr) n.pw = pwErr;
     }
     if (pw2 !== pw) n.pw2 = "No coinciden";
-    if (isEstu && !code) n.code = "Pide a tu profe el código";
     if (!accept) n.accept = "Acepta los términos";
     setErrs(n);
     if (!Object.keys(n).length) onSubmit?.({ nombre, apellido, email, pw, role });
@@ -491,7 +727,7 @@ function RegisterForm({ role, onBack, onSubmit, isLoading }) {
         <TextField label="Nombre" icon="user" value={nombre}
           onChange={(v) => { setNombre(v); if (errs.nombre) setErrs({ ...errs, nombre: undefined }); }}
           placeholder="Marina" error={errs.nombre}/>
-        <TextField label="Apellido" icon="user" value={apellido}
+        <TextField label="Apellido (opcional)" icon="user" value={apellido}
           onChange={(v) => { setApellido(v); if (errs.apellido) setErrs({ ...errs, apellido: undefined }); }}
           placeholder="Pérez" error={errs.apellido}/>
       </div>
@@ -509,11 +745,7 @@ function RegisterForm({ role, onBack, onSubmit, isLoading }) {
           placeholder="••••••••" error={errs.pw2}/>
       </div>
 
-      {isEstu ? (
-        <TextField label="Código de tu clase" icon="school" value={code}
-          onChange={(v) => { setCode(v.toUpperCase()); if (errs.code) setErrs({ ...errs, code: undefined }); }}
-          placeholder="ISLA-4B-2026" error={errs.code}/>
-      ) : (
+      {!isEstu && (
         <TextField label="Institución" icon="school" value={code}
           onChange={(v) => setCode(v)}
           placeholder="Colegio Las Palmeras"/>
@@ -663,11 +895,13 @@ export default function IslaEducativaLogin({
               active={!isEstu} role="docente"
               icon="users" label="Soy Docente"
               onClick={() => setRole("docente")}
+              disabled={mode === "login"}
             />
             <TabPill
               active={isEstu} role="estudiante"
               icon="book" label="Soy Estudiante"
               onClick={() => setRole("estudiante")}
+              disabled={mode === "login"}
             />
           </div>
 
@@ -697,18 +931,22 @@ export default function IslaEducativaLogin({
 }
 
 // ─── Subcomponentes pequeños ────────────────────────────────────────────────
-function TabPill({ active, role, icon, label, onClick }) {
+function TabPill({ active, role, icon, label, onClick, disabled }) {
   const activeClasses = active
     ? (role === "estudiante"
       ? "bg-[#2BA15C] text-[#FFFDF6] shadow-[0_2px_0_#1B7A45,inset_0_1px_0_rgba(255,255,255,.25)]"
       : "bg-[#1F8FCE] text-[#FFFDF6] shadow-[0_2px_0_#0E5C8A,inset_0_1px_0_rgba(255,255,255,.25)]")
     : "text-[#4E6B7E] hover:text-[#173951]";
+
+  const disabledClasses = disabled ? "opacity-50 cursor-not-allowed" : "";
+
   return (
     <button
       role="tab" aria-selected={active} onClick={onClick}
+      disabled={disabled}
       className={`flex items-center justify-center gap-1.5 py-2.5 rounded-full
                   font-[Fredoka] font-semibold text-[14.5px] tracking-tight
-                  transition-colors ${activeClasses}`}
+                  transition-colors ${activeClasses} ${disabledClasses}`}
     >
       <Icon name={icon} className="w-4 h-4"/>
       {label}
