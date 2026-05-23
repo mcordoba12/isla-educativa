@@ -593,8 +593,8 @@ export default function IslaEducativaLogin({
     setIsLoading(true);
     try {
       await onRegister?.(data);
-      setToast(`¡Pasaporte creado, ${data.nombre}! 🌴`);
-      setMode("login");
+      setToast(`¡Bienvenid@ a la isla, ${data.nombre}! 🌴`);
+      // No cambiar de modo, la redirección maneja todo
       setTimeout(() => setToast(null), 2800);
     } catch (err) {
       setToast(err.message || "Error al registrarse");

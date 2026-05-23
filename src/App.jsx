@@ -57,10 +57,21 @@ function App() {
       if (authError) throw authError
 
       // El trigger automático insertará el usuario en la tabla users
-      // Mostrar mensaje de éxito
-      alert(
-        `¡Cuenta creada exitosamente, ${data.nombre}!\n\nVerifica tu email para confirmar tu cuenta.`
-      )
+      // Como email confirmations está desactivado, el usuario puede entrar directo
+      // Hacemos login automático
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.pw,
+      })
+
+      if (signInError) throw signInError
+
+      // Redirigir según rol
+      if (data.role === 'docente') {
+        navigate('/teacher/dashboard')
+      } else {
+        navigate('/student/island')
+      }
     } catch (error) {
       throw new Error(error.message || 'Error al registrarse')
     }
