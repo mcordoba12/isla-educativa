@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { supabase } from "../../services/supabaseClient";
 
 // ─── Animaciones que no existen en Tailwind por defecto ─────────────────────
 const ANIMATIONS_CSS = `
@@ -244,6 +245,82 @@ function TextField({ label, type = "text", value, onChange, placeholder, icon, e
   );
 }
 
+// ─── Modal para recuperar contraseña ────────────────────────────────────────
+function ForgotPasswordModal({ onClose, onSubmit, isLoading }) {
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (!email) {
+      setError("Escribe tu correo");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("Correo no válido");
+      return;
+    }
+
+    try {
+      await onSubmit?.(email);
+      setSuccess(true);
+      setTimeout(() => onClose?.(), 3000);
+    } catch (err) {
+      setError(err.message || "Error al enviar recuperación");
+    }
+  };
+
+  if (success) {
+    return (
+      <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[9999] p-4">
+        <div className="bg-[#FFFDF6] border-[3px] border-[#173951] rounded-2xl p-6 max-w-sm w-full text-center">
+          <div className="text-4xl mb-3">🌊</div>
+          <p className="text-[#173951] font-bold text-base mb-2">¡Revisa tu correo, aventurero!</p>
+          <p className="text-[#4E6B7E] text-sm">Te enviamos las instrucciones para recuperar tu contraseña</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[9999] p-4">
+      <div className="bg-[#FFFDF6] border-[3px] border-[#173951] rounded-2xl p-6 max-w-sm w-full">
+        <h3 className="font-[Fredoka] font-bold text-lg text-[#173951] mb-4">Recuperar contraseña</h3>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+          <TextField
+            label="Tu correo"
+            type="email"
+            icon="mail"
+            value={email}
+            onChange={setEmail}
+            placeholder="tu@correo.com"
+            error={error}
+          />
+          <div className="flex gap-2 mt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 rounded-lg border-[2px] border-[#173951] text-[#173951] font-semibold hover:bg-gray-100 transition"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="flex-1 px-4 py-2 rounded-lg bg-[#1F8FCE] text-white font-semibold hover:bg-[#0E5C8A] disabled:opacity-60 transition"
+            >
+              {isLoading ? "Enviando..." : "Enviar"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 // ─── Login form ─────────────────────────────────────────────────────────────
 function LoginForm({ role, onGoRegister, onSubmit, isLoading }) {
   const isEstu = role === "estudiante";
@@ -251,16 +328,30 @@ function LoginForm({ role, onGoRegister, onSubmit, isLoading }) {
   const [pw, setPw] = useState("");
   const [remember, setRemember] = useState(true);
   const [errs, setErrs] = useState({});
+  const [showForgotModal, setShowForgotModal] = useState(false);
+  const [forgotLoading, setForgotLoading] = useState(false);
 
   const submit = (e) => {
     e.preventDefault();
     const next = {};
     if (!email) next.email = "Escribe tu correo";
-    else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) next.email = "Correo no válido";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) next.email = "Correo no válido";
     if (!pw) next.pw = "Escribe tu contraseña";
     else if (pw.length < 4) next.pw = "Al menos 4 caracteres";
     setErrs(next);
     if (!Object.keys(next).length) onSubmit?.({ email, pw, remember, role });
+  };
+
+  const handleForgotPassword = async (forgotEmail) => {
+    setForgotLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail);
+      if (error) throw error;
+    } catch (err) {
+      throw new Error(err.message || "Error al enviar recuperación");
+    } finally {
+      setForgotLoading(false);
+    }
   };
 
   return (
@@ -293,10 +384,22 @@ function LoginForm({ role, onGoRegister, onSubmit, isLoading }) {
                           peer-checked:after:rotate-[-45deg] peer-checked:after:translate-x-[1px] peer-checked:after:-translate-y-[1px]"/>
           Recordarme
         </label>
-        <button type="button" className="text-[13px] font-bold text-[#0E5C8A] hover:text-[#E85C42] hover:underline px-0.5 py-1">
+        <button
+          type="button"
+          onClick={() => setShowForgotModal(true)}
+          className="text-[13px] font-bold text-[#0E5C8A] hover:text-[#E85C42] hover:underline px-0.5 py-1"
+        >
           ¿Olvidaste tu contraseña?
         </button>
       </div>
+
+      {showForgotModal && (
+        <ForgotPasswordModal
+          onClose={() => setShowForgotModal(false)}
+          onSubmit={handleForgotPassword}
+          isLoading={forgotLoading}
+        />
+      )}
 
       <button
         type="submit"
@@ -349,15 +452,25 @@ function RegisterForm({ role, onBack, onSubmit, isLoading }) {
   const [accept, setAccept] = useState(false);
   const [errs, setErrs] = useState({});
 
+  const validatePassword = (password) => {
+    if (password.length < 8) return "Mínimo 8 caracteres";
+    if (!/[A-Z]/.test(password)) return "Necesita una mayúscula";
+    if (!/[!@#$%^&*]/.test(password)) return "Necesita un carácter especial (!@#$%^&*)";
+    return null;
+  };
+
   const submit = (e) => {
     e.preventDefault();
     const n = {};
     if (!nombre) n.nombre = "Falta el nombre";
     if (!apellido) n.apellido = "Falta el apellido";
     if (!email) n.email = "Escribe tu correo";
-    else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) n.email = "Correo no válido";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) n.email = "Correo no válido";
     if (!pw) n.pw = "Crea una contraseña";
-    else if (pw.length < 6) n.pw = "Al menos 6 caracteres";
+    else {
+      const pwErr = validatePassword(pw);
+      if (pwErr) n.pw = pwErr;
+    }
     if (pw2 !== pw) n.pw2 = "No coinciden";
     if (isEstu && !code) n.code = "Pide a tu profe el código";
     if (!accept) n.accept = "Acepta los términos";

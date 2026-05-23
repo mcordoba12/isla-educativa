@@ -12,7 +12,13 @@ function App() {
         password: data.pw,
       })
 
-      if (authError) throw authError
+      if (authError) {
+        // Manejar error de email no confirmado
+        if (authError.message.includes('Email not confirmed')) {
+          throw new Error('Por favor confirma tu email. Revisa tu bandeja de entrada o spam.')
+        }
+        throw authError
+      }
 
       // Obtener el rol del usuario desde la tabla users
       const { data: userData, error: userError } = await supabase
