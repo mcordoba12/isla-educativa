@@ -7,6 +7,7 @@ export function LoginPage() {
   const navigate = useNavigate()
   const { login, loading, error } = useAuthContext()
   const [showPassword, setShowPassword] = useState(false)
+  const [rol, setRol] = useState('estudiante')
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -121,10 +122,18 @@ export function LoginPage() {
 
           {/* Selector de rol */}
           <div className="role-toggle">
-            <button type="button" className="role-btn">
+            <button
+              type="button"
+              className={`role-btn ${rol === 'docente' ? 'active' : ''}`}
+              onClick={() => setRol('docente')}
+            >
               🎓 Soy Docente
             </button>
-            <button type="button" className="role-btn active">
+            <button
+              type="button"
+              className={`role-btn ${rol === 'estudiante' ? 'active' : ''}`}
+              onClick={() => setRol('estudiante')}
+            >
               📋 Soy Estudiante
             </button>
           </div>
