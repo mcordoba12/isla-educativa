@@ -1,45 +1,75 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { AuthProvider } from './context/AuthContext'
-import { LoginPage } from './components/Auth/LoginPage'
-import { RegisterPage } from './components/Auth/RegisterPage'
-import { ProtectedRoute } from './components/Auth/ProtectedRoute'
-import './styles/animations.css'
-
-function Dashboard() {
-  return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">
-          Bienvenido a la Isla Educativa
-        </h1>
-        <p className="text-gray-600 text-lg">
-          Come Dispersión te está esperando. Los dashboards se construirán en las próximas fases.
-        </p>
-      </div>
-    </div>
-  )
-}
+import { useNavigate } from 'react-router-dom'
+import { supabase } from './services/supabaseClient'
+import IslaEducativaLogin from './components/Auth/IslaEducativaLogin'
 
 function App() {
+  const navigate = useNavigate()
+
+  const handleLogin = async (data) => {
+    try {
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.pw,
+      })
+
+      if (authError) throw authError
+
+      // Obtener el rol del usuario desde la tabla users
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('rol')
+        .eq('id', authData.user.id)
+        .single()
+
+      if (userError) throw userError
+
+      // Redirigir según rol
+      if (userData.rol === 'docente') {
+        navigate('/teacher/dashboard')
+      } else {
+        navigate('/student/island')
+      }
+    } catch (error) {
+      throw new Error(error.message || 'Error al iniciar sesión')
+    }
+  }
+
+  const handleRegister = async (data) => {
+    try {
+      // Registrar en auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.pw,
+        options: {
+          data: {
+            nombre_completo: `${data.nombre} ${data.apellido}`,
+            rol: data.role,
+          },
+        },
+      })
+
+      if (authError) throw authError
+
+      // El trigger automático insertará el usuario en la tabla users
+      // Mostrar mensaje de éxito
+      alert(
+        `¡Cuenta creada exitosamente, ${data.nombre}!\n\nVerifica tu email para confirmar tu cuenta.`
+      )
+    } catch (error) {
+      throw new Error(error.message || 'Error al registrarse')
+    }
+  }
+
   return (
-    <Router>
-      <AuthProvider>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
-      </AuthProvider>
-    </Router>
+    <IslaEducativaLogin
+      mascotSrc="/src/assets/images/cookie-normal.png"
+      defaultRole="estudiante"
+      title="Isla Educativa"
+      onLogin={handleLogin}
+      onRegister={handleRegister}
+      showFloatingChips={true}
+      showMascot={true}
+    />
   )
 }
 
