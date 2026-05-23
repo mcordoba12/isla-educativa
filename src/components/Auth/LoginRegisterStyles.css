@@ -1,4 +1,4 @@
-/* ================== FONDO ANIMADO ================== */
+/* ================== CONTENEDOR PRINCIPAL ================== */
 
 .login-container {
   position: relative;
@@ -7,8 +7,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 20px;
   overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
+
+/* ================== FONDO OCEANICO ================== */
 
 .ocean-background {
   position: fixed;
@@ -19,13 +23,34 @@
   z-index: -1;
 }
 
+/* Cielo */
 .sky {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 70%;
-  background: linear-gradient(180deg, #87CEEB 0%, #ADD8E6 50%, #B0E0E6 100%);
+  height: 50%;
+  background: #87CEEB;
+}
+
+/* Mar */
+.sea {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 25%;
+  background: #4A90E2;
+}
+
+/* Arena */
+.sand {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 25%;
+  background: #F5D547;
 }
 
 /* ================== NUBES ================== */
@@ -33,90 +58,48 @@
 .cloud {
   position: absolute;
   background: white;
-  border-radius: 100px;
-  opacity: 0.9;
-}
-
-.cloud::before,
-.cloud::after {
-  content: '';
-  position: absolute;
-  background: white;
-  border-radius: 100px;
+  border-radius: 50%;
+  opacity: 0.95;
 }
 
 .cloud-1 {
-  width: 100px;
-  height: 40px;
-  top: 10%;
+  width: 80px;
+  height: 30px;
+  top: 15%;
   left: 5%;
-  animation: moveCloud 20s infinite linear;
-}
-
-.cloud-1::before {
-  width: 50px;
-  height: 50px;
-  top: -25px;
-  left: 10px;
-}
-
-.cloud-1::after {
-  width: 60px;
-  height: 40px;
-  top: -15px;
-  right: 10px;
+  border-radius: 50%;
+  box-shadow: -20px 0 0 -5px white, 20px 0 0 -5px white;
+  animation: float 20s infinite ease-in-out;
 }
 
 .cloud-2 {
-  width: 120px;
-  height: 50px;
-  top: 20%;
-  right: 10%;
-  animation: moveCloud 25s infinite linear reverse;
-}
-
-.cloud-2::before {
-  width: 60px;
-  height: 60px;
-  top: -30px;
-  left: 20px;
-}
-
-.cloud-2::after {
-  width: 70px;
-  height: 45px;
-  top: -20px;
-  right: 15px;
+  width: 100px;
+  height: 35px;
+  top: 10%;
+  left: 70%;
+  border-radius: 50%;
+  box-shadow: -25px 0 0 -5px white, 25px 0 0 -5px white;
+  animation: float 25s infinite ease-in-out reverse;
+  animation-delay: -5s;
 }
 
 .cloud-3 {
-  width: 90px;
-  height: 35px;
-  top: 35%;
-  left: 15%;
-  animation: moveCloud 22s infinite linear;
+  width: 70px;
+  height: 25px;
+  top: 25%;
+  left: 30%;
+  border-radius: 50%;
+  box-shadow: -18px 0 0 -5px white, 18px 0 0 -5px white;
+  animation: float 22s infinite ease-in-out;
+  animation-delay: -10s;
 }
 
-.cloud-3::before {
-  width: 45px;
-  height: 45px;
-  top: -22px;
-  left: 15px;
-}
-
-.cloud-3::after {
-  width: 55px;
-  height: 35px;
-  top: -12px;
-  right: 12px;
-}
-
-@keyframes moveCloud {
-  from {
-    transform: translateX(-150vw);
+@keyframes float {
+  0%, 100% {
+    transform: translateX(0);
   }
-  to {
-    transform: translateX(150vw);
+  50% {
+    transform: translateX(30px);
   }
 }
 
@@ -124,159 +107,181 @@
 
 .sun {
   position: absolute;
-  width: 120px;
-  height: 120px;
-  top: 15%;
-  right: 10%;
+  width: 100px;
+  height: 100px;
+  top: 10%;
+  right: 12%;
+  background: #FFD700;
   border-radius: 50%;
-  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-  box-shadow: 0 0 60px rgba(255, 200, 0, 0.5);
+  box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
 }
 
 .sun-rays {
   position: absolute;
   width: 100%;
   height: 100%;
-  top: -30px;
-  left: -30px;
 }
 
 .sun-rays::before,
 .sun-rays::after {
   content: '';
   position: absolute;
-  width: 20px;
-  height: 80px;
   background: #FFD700;
-  left: 50%;
-  transform: translateX(-50%);
 }
 
 .sun-rays::before {
-  top: -60px;
-  box-shadow: 80px 0 0 #FFD700, -80px 0 0 #FFD700;
-}
-
-.sun-rays::after {
-  top: 60px;
-  box-shadow: 60px 60px 0 #FFD700, -60px 60px 0 #FFD700, 60px -60px 0 #FFD700, -60px -60px 0 #FFD700;
+  width: 15px;
+  height: 60px;
+  top: -70px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 10px;
+  box-shadow:
+    75px 25px 0 -10px,
+    75px -25px 0 -10px,
+    -75px 25px 0 -10px,
+    -75px -25px 0 -10px,
+    0 75px 0 -10px,
+    0 -75px 0 -10px;
 }
 
 /* ================== PALMERAS ================== */
 
 .palm {
   position: absolute;
-  bottom: 30%;
+  bottom: 25%;
 }
 
 .palm-left {
-  left: 5%;
+  left: 8%;
 }
 
 .palm-right {
-  right: 5%;
+  right: 8%;
 }
 
 .palm-trunk {
-  width: 30px;
-  height: 150px;
-  background: linear-gradient(90deg, #8B4513 0%, #A0522D 100%);
-  margin-left: auto;
-  margin-right: auto;
-  border-radius: 15px;
+  width: 20px;
+  height: 120px;
+  background: #8B6F47;
+  border-radius: 10px;
+  margin: 0 auto;
 }
 
 .palm-leaves {
   position: relative;
-  width: 200px;
-  height: 100px;
-  margin-left: -85px;
+  width: 160px;
+  height: 80px;
+  margin-left: -70px;
+  margin-top: -10px;
 }
 
-.palm-leaves::before,
-.palm-leaves::after {
-  content: '';
+.palm-leaf {
   position: absolute;
-  width: 150px;
-  height: 30px;
+  width: 100px;
+  height: 15px;
   background: #228B22;
   border-radius: 50%;
-  transform-origin: right center;
+  left: 30px;
+  top: 40px;
 }
 
-.palm-leaves::before {
-  top: 0;
-  transform: rotate(-45deg);
+.palm-leaf:nth-child(1) {
+  transform: rotate(-60deg);
 }
 
-.palm-leaves::after {
-  top: 30px;
-  transform: rotate(45deg);
+.palm-leaf:nth-child(2) {
+  transform: rotate(-30deg);
 }
 
-/* ================== BOTE ================== */
+.palm-leaf:nth-child(3) {
+  transform: rotate(0deg);
+}
+
+.palm-leaf:nth-child(4) {
+  transform: rotate(30deg);
+}
+
+.palm-leaf:nth-child(5) {
+  transform: rotate(60deg);
+}
+
+/* ================== VELERO ================== */
 
 .boat {
   position: absolute;
-  width: 80px;
-  height: 40px;
-  bottom: 35%;
-  left: 20%;
-  background: linear-gradient(135deg, transparent 40%, #ff6b35 40%, #ff6b35 60%, transparent 60%);
+  bottom: 32%;
+  left: 15%;
+  width: 60px;
+  height: 50px;
 }
 
-.boat::before {
-  content: '';
+.boat-hull {
   position: absolute;
+  bottom: 0;
+  left: 10px;
+  width: 40px;
+  height: 20px;
+  background: #E74C3C;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+}
+
+.boat-sail {
+  position: absolute;
+  bottom: 10px;
+  left: 8px;
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 0px solid transparent;
+  border-bottom: 30px solid #FF8C42;
+  opacity: 0.9;
+}
+
+.boat-mast {
+  position: absolute;
+  bottom: 20px;
+  left: 18px;
   width: 2px;
-  height: 40px;
-  background: #8B4513;
-  left: 40px;
-  top: -35px;
-}
-
-.boat::after {
-  content: '';
-  position: absolute;
-  width: 30px;
-  height: 25px;
-  background: #ff6b35;
-  top: -25px;
-  left: 35px;
-  clip-path: polygon(0 100%, 50% 0, 100% 100%);
+  height: 30px;
+  background: #333;
 }
 
 /* ================== OLAS ================== */
 
+.waves {
+  position: absolute;
+  bottom: 25%;
+  left: 0;
+  width: 100%;
+  height: 25%;
+  opacity: 0.7;
+}
+
 .wave {
   position: absolute;
-  bottom: 30%;
+  bottom: 0;
   left: 0;
   width: 200%;
-  height: 60px;
-  background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 60"%3E%3Cpath d="M0,30 Q300,0 600,30 T1200,30 L1200,60 L0,60 Z" fill="%234A90E2" opacity="0.6"/%3E%3C/svg%3E') repeat-x;
-  animation: wave 15s linear infinite;
+  height: 40px;
+  background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 60"%3E%3Cpath d="M0,30 Q300,0 600,30 T1200,30 L1200,60 L0,60 Z" fill="white" opacity="0.6"/%3E%3C/svg%3E') repeat-x;
+  background-size: auto 100%;
+  animation: wave-move 8s linear infinite;
 }
 
-.wave-1 {
-  bottom: 30%;
+.wave:nth-child(1) {
+  bottom: 10px;
   animation-delay: 0s;
-  opacity: 0.6;
+  opacity: 0.3;
 }
 
-.wave-2 {
-  bottom: 32%;
-  animation-delay: -5s;
-  opacity: 0.4;
+.wave:nth-child(2) {
+  bottom: 5px;
+  animation-delay: -3s;
+  opacity: 0.5;
 }
 
-.wave-3 {
-  bottom: 34%;
-  animation-delay: -10s;
-  opacity: 0.2;
-}
-
-@keyframes wave {
+@keyframes wave-move {
   0% {
     transform: translateX(0);
   }
@@ -285,50 +290,22 @@
   }
 }
 
-/* ================== ARENA ================== */
-
-.sand {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 30%;
-  background: linear-gradient(180deg, #F4D03F 0%, #F9D471 50%, #E5BF47 100%);
-}
-
-.sand::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background:
-    radial-gradient(2px 2px at 20px 30px, #D4B745, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 60px 70px, #D4B745, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 50px 50px, #D4B745, rgba(0,0,0,0));
-  background-size: 200px 200px;
-  background-repeat: repeat;
-}
-
 /* ================== TARJETA ================== */
 
 .card {
   position: relative;
-  z-index: 10;
-  width: 90%;
-  max-width: 450px;
-  background: linear-gradient(180deg, #FFFFFF 0%, #F5F5F5 100%);
-  border-radius: 30px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-  padding: 60px 40px 40px;
-  border: 3px solid #333;
+  z-index: 20;
+  width: 100%;
+  max-width: 480px;
+  background: white;
+  border-radius: 35px;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+  padding: 70px 45px 50px;
+  border: 2px solid #333;
 }
 
 .card-register {
-  max-width: 520px;
-  max-height: 90vh;
-  overflow-y: auto;
+  padding: 70px 45px 40px;
 }
 
 .character-container {
@@ -355,6 +332,90 @@
   }
   50% {
     transform: translateY(-20px);
+  }
+}
+
+/* ================== PERSONAJE ================== */
+
+.character-container {
+  position: absolute;
+  top: -90px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.character {
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.bounce-soft {
+  animation: bounceSoft 2s ease-in-out infinite;
+}
+
+@keyframes bounceSoft {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-18px);
+  }
+}
+
+/* ================== BADGES FLOTANTES ================== */
+
+.badge {
+  position: fixed;
+  background: white;
+  border: 2px solid #333;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  z-index: 15;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+  animation: badgeFloat 3s ease-in-out infinite;
+}
+
+.badge-top-left {
+  top: 5%;
+  left: 3%;
+  animation-delay: 0s;
+}
+
+.badge-bottom-left {
+  bottom: 15%;
+  left: 2%;
+  animation-delay: 1s;
+}
+
+.badge-top-right {
+  top: 18%;
+  right: 3%;
+  animation-delay: 0.5s;
+}
+
+.badge-bottom-right {
+  bottom: 20%;
+  right: 2%;
+  animation-delay: 1.5s;
+}
+
+@keyframes badgeFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
   }
 }
 
@@ -687,15 +748,395 @@
 
 /* ================== RESPONSIVE ================== */
 
+/* ================== CONTENIDO DE TARJETA ================== */
+
+.card-content {
+  text-align: center;
+}
+
+.subtitle {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: #4A90E2;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.title {
+  font-size: 42px;
+  font-weight: 900;
+  margin-bottom: 8px;
+  color: #1a3a52;
+  line-height: 1.2;
+}
+
+.title-accent {
+  color: #FF7F50;
+}
+
+.description {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.btn-back {
+  display: inline-block;
+  color: #4A90E2;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-back:hover {
+  text-decoration: underline;
+}
+
+/* ================== SELECTOR DE ROL ================== */
+
+.role-toggle {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  background: white;
+  padding: 4px;
+  border-radius: 25px;
+  border: 2px solid #333;
+  width: 100%;
+}
+
+.role-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  border-radius: 22px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #666;
+  font-size: 12px;
+  transition: all 0.3s;
+}
+
+.role-btn.active {
+  background: #4CAF50;
+  color: white;
+}
+
+.role-btn:hover:not(.active) {
+  background: #f0f0f0;
+}
+
+/* ================== FORMULARIO ================== */
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.form-group {
+  text-align: left;
+}
+
+.form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.form-group label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: 2px solid #333;
+  border-radius: 15px;
+  padding: 0 12px;
+  background: white;
+  height: 44px;
+}
+
+.input-icon {
+  font-size: 16px;
+  margin-right: 8px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.input-wrapper input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 8px 0;
+  font-size: 13px;
+  background: transparent;
+  color: #333;
+}
+
+.input-wrapper input::placeholder {
+  color: #999;
+}
+
+.toggle-password {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0 4px;
+  color: #666;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.toggle-password:hover:not(:disabled) {
+  color: #333;
+}
+
+.toggle-password:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ================== CHECKBOX Y TÉRMINOS ================== */
+
+.form-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  margin-bottom: 15px;
+}
+
+.form-checkbox input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #4CAF50;
+  flex-shrink: 0;
+}
+
+.form-checkbox label {
+  margin: 0;
+  cursor: pointer;
+  color: #333;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.forgot-password {
+  margin-left: auto;
+  color: #4A90E2;
+  text-decoration: none;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+}
+
+.form-terms {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 11px;
+  margin-bottom: 15px;
+}
+
+.form-terms input {
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  cursor: pointer;
+  accent-color: #4CAF50;
+  flex-shrink: 0;
+}
+
+.form-terms label {
+  line-height: 1.4;
+  color: #333;
+  cursor: pointer;
+}
+
+.link-terms {
+  color: #4A90E2;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.link-terms:hover {
+  text-decoration: underline;
+}
+
+/* ================== BOTONES ================== */
+
+.btn-primary {
+  width: 100%;
+  padding: 13px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-bottom: 10px;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.3);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ================== SEPARADOR Y SWITCH ================== */
+
+.divider {
+  text-align: center;
+  color: #999;
+  margin: 12px 0;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.switch-auth {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+}
+
+.link-register {
+  color: #FFA500;
+  text-decoration: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.link-register:hover {
+  text-decoration: underline;
+}
+
+/* ================== MENSAJES DE ERROR ================== */
+
+.error-message {
+  background: #FFE6E6;
+  border: 2px solid #FF6B6B;
+  color: #C92A2A;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+/* ================== RESPONSIVE ================== */
+
 @media (max-width: 768px) {
   .card {
-    width: 85%;
-    max-width: 100%;
-    padding: 50px 30px 30px;
+    max-width: 95%;
+    padding: 60px 30px 40px;
   }
 
   .title {
     font-size: 36px;
+  }
+
+  .character {
+    width: 110px;
+    height: 110px;
+  }
+
+  .character-container {
+    top: -70px;
+  }
+
+  .badge {
+    font-size: 11px;
+    padding: 6px 12px;
+  }
+
+  .role-toggle {
+    gap: 8px;
+  }
+
+  .role-btn {
+    font-size: 11px;
+    padding: 8px 12px;
+  }
+
+  .form-row {
+    gap: 8px;
+  }
+
+  .sun {
+    width: 80px;
+    height: 80px;
+  }
+
+  .palm {
+    bottom: 28%;
+  }
+
+  .palm-trunk {
+    height: 100px;
+  }
+}
+
+@media (max-width: 600px) {
+  .login-container {
+    padding: 10px;
+  }
+
+  .card {
+    max-width: 100%;
+    padding: 50px 25px 30px;
+    border-radius: 25px;
+  }
+
+  .card-register {
+    padding: 50px 25px 25px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .subtitle {
+    font-size: 10px;
+  }
+
+  .description {
+    font-size: 12px;
   }
 
   .character {
@@ -704,45 +1145,72 @@
   }
 
   .character-container {
-    top: -60px;
+    top: -65px;
   }
 
-  .decoration {
-    font-size: 12px;
-    padding: 6px 12px;
-  }
-
-  .cloud-1,
-  .cloud-2,
-  .cloud-3 {
-    opacity: 0.7;
-  }
-}
-
-@media (max-width: 480px) {
-  .card {
-    padding: 40px 20px 25px;
-  }
-
-  .title {
-    font-size: 28px;
-  }
-
-  .role-btn {
-    font-size: 11px;
-    padding: 8px 12px;
-  }
-
-  .decoration {
+  .badge {
     display: none;
   }
 
   .sun {
-    width: 90px;
-    height: 90px;
+    width: 70px;
+    height: 70px;
   }
 
   .palm {
-    bottom: 35%;
+    bottom: 30%;
+  }
+
+  .palm-trunk {
+    width: 15px;
+    height: 80px;
+  }
+
+  .role-toggle {
+    gap: 6px;
+    padding: 3px;
+  }
+
+  .role-btn {
+    font-size: 10px;
+    padding: 7px 10px;
+  }
+
+  .form-group label {
+    font-size: 10px;
+  }
+
+  .input-wrapper {
+    height: 40px;
+  }
+
+  .input-wrapper input {
+    font-size: 12px;
+  }
+
+  .input-icon {
+    font-size: 14px;
+  }
+
+  .form-checkbox {
+    font-size: 11px;
+  }
+
+  .form-terms {
+    font-size: 10px;
+  }
+
+  .btn-primary {
+    padding: 11px;
+    font-size: 13px;
+  }
+
+  .divider {
+    margin: 10px 0;
+    font-size: 11px;
+  }
+
+  .switch-auth {
+    font-size: 11px;
   }
 }

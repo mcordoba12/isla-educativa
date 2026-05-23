@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuthContext } from '../../context/AuthContext'
-import { supabase } from '../../services/supabaseClient'
 import './LoginRegisterStyles.css'
 
 export function RegisterPage() {
@@ -16,7 +15,7 @@ export function RegisterPage() {
     email: '',
     password: '',
     confirmPassword: '',
-    codigoClase: '',
+    institucion: '',
     terminosAceptados: false
   })
   const [localError, setLocalError] = useState(null)
@@ -34,7 +33,6 @@ export function RegisterPage() {
     e.preventDefault()
     setLocalError(null)
 
-    // Validaciones
     if (!formData.nombre || !formData.apellido || !formData.email || !formData.password) {
       setLocalError('Por favor completa todos los campos requeridos')
       return
@@ -47,11 +45,6 @@ export function RegisterPage() {
 
     if (formData.password !== formData.confirmPassword) {
       setLocalError('Las contraseñas no coinciden')
-      return
-    }
-
-    if (rol === 'estudiante' && !formData.codigoClase) {
-      setLocalError('Debes ingresar el código de tu clase')
       return
     }
 
@@ -76,29 +69,58 @@ export function RegisterPage() {
 
   return (
     <div className="login-container">
-      {/* Fondo animado */}
+      {/* Fondo oceanico */}
       <div className="ocean-background">
         <div className="sky"></div>
+        <div className="sea"></div>
+        <div className="sand"></div>
+
         <div className="cloud cloud-1"></div>
         <div className="cloud cloud-2"></div>
         <div className="cloud cloud-3"></div>
+
         <div className="sun">
           <div className="sun-rays"></div>
         </div>
+
         <div className="palm palm-left">
           <div className="palm-trunk"></div>
-          <div className="palm-leaves"></div>
+          <div className="palm-leaves">
+            <div className="palm-leaf"></div>
+            <div className="palm-leaf"></div>
+            <div className="palm-leaf"></div>
+            <div className="palm-leaf"></div>
+            <div className="palm-leaf"></div>
+          </div>
         </div>
         <div className="palm palm-right">
           <div className="palm-trunk"></div>
-          <div className="palm-leaves"></div>
+          <div className="palm-leaves">
+            <div className="palm-leaf"></div>
+            <div className="palm-leaf"></div>
+            <div className="palm-leaf"></div>
+            <div className="palm-leaf"></div>
+            <div className="palm-leaf"></div>
+          </div>
         </div>
-        <div className="boat"></div>
-        <div className="wave wave-1"></div>
-        <div className="wave wave-2"></div>
-        <div className="wave wave-3"></div>
-        <div className="sand"></div>
+
+        <div className="boat">
+          <div className="boat-mast"></div>
+          <div className="boat-sail"></div>
+          <div className="boat-hull"></div>
+        </div>
+
+        <div className="waves">
+          <div className="wave"></div>
+          <div className="wave"></div>
+        </div>
       </div>
+
+      {/* Badges flotantes */}
+      <div className="badge badge-top-left">📋 +120 misiones</div>
+      <div className="badge badge-bottom-left">⛵ Clase en vivo</div>
+      <div className="badge badge-top-right">🎁 Premios diarios</div>
+      <div className="badge badge-bottom-right">🏆 24 islas</div>
 
       {/* Tarjeta */}
       <div className="card card-register">
@@ -155,13 +177,12 @@ export function RegisterPage() {
           <form onSubmit={handleSubmit} className="login-form">
             {/* Nombre y Apellido */}
             <div className="form-row">
-              <div className="form-group" style={{ flex: 1 }}>
-                <label htmlFor="nombre">NOMBRE</label>
+              <div className="form-group">
+                <label>NOMBRE</label>
                 <div className="input-wrapper">
                   <span className="input-icon">👤</span>
                   <input
                     type="text"
-                    id="nombre"
                     name="nombre"
                     value={formData.nombre}
                     onChange={handleChange}
@@ -170,13 +191,12 @@ export function RegisterPage() {
                   />
                 </div>
               </div>
-              <div className="form-group" style={{ flex: 1 }}>
-                <label htmlFor="apellido">APELLIDO</label>
+              <div className="form-group">
+                <label>APELLIDO</label>
                 <div className="input-wrapper">
                   <span className="input-icon">👤</span>
                   <input
                     type="text"
-                    id="apellido"
                     name="apellido"
                     value={formData.apellido}
                     onChange={handleChange}
@@ -189,12 +209,11 @@ export function RegisterPage() {
 
             {/* Email */}
             <div className="form-group">
-              <label htmlFor="email">CORREO</label>
+              <label>CORREO</label>
               <div className="input-wrapper">
                 <span className="input-icon">✉️</span>
                 <input
                   type="email"
-                  id="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
@@ -206,13 +225,12 @@ export function RegisterPage() {
 
             {/* Contraseña y Repetir */}
             <div className="form-row">
-              <div className="form-group" style={{ flex: 1 }}>
-                <label htmlFor="password">CONTRASEÑA</label>
+              <div className="form-group">
+                <label>CONTRASEÑA</label>
                 <div className="input-wrapper">
                   <span className="input-icon">🔒</span>
                   <input
                     type={showPassword ? 'text' : 'password'}
-                    id="password"
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
@@ -224,18 +242,18 @@ export function RegisterPage() {
                     className="toggle-password"
                     onClick={() => setShowPassword(!showPassword)}
                     disabled={loading}
+                    tabIndex="-1"
                   >
-                    {showPassword ? '👁️' : '👁️‍🗨️'}
+                    👁️
                   </button>
                 </div>
               </div>
-              <div className="form-group" style={{ flex: 1 }}>
-                <label htmlFor="confirmPassword">REPETIR</label>
+              <div className="form-group">
+                <label>REPETIR</label>
                 <div className="input-wrapper">
                   <span className="input-icon">🔒</span>
                   <input
                     type={showConfirmPassword ? 'text' : 'password'}
-                    id="confirmPassword"
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleChange}
@@ -247,31 +265,29 @@ export function RegisterPage() {
                     className="toggle-password"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     disabled={loading}
+                    tabIndex="-1"
                   >
-                    {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
+                    👁️
                   </button>
                 </div>
               </div>
             </div>
 
-            {/* Código de clase (solo estudiantes) */}
-            {rol === 'estudiante' && (
-              <div className="form-group">
-                <label htmlFor="codigoClase">CÓDIGO DE TU CLASE</label>
-                <div className="input-wrapper">
-                  <span className="input-icon">🏫</span>
-                  <input
-                    type="text"
-                    id="codigoClase"
-                    name="codigoClase"
-                    value={formData.codigoClase}
-                    onChange={handleChange}
-                    placeholder="ISLA-4B-2026"
-                    disabled={loading}
-                  />
-                </div>
+            {/* Institución */}
+            <div className="form-group">
+              <label>INSTITUCIÓN</label>
+              <div className="input-wrapper">
+                <span className="input-icon">🏫</span>
+                <input
+                  type="text"
+                  name="institucion"
+                  value={formData.institucion}
+                  onChange={handleChange}
+                  placeholder="Colegio Las Palmeras"
+                  disabled={loading}
+                />
               </div>
-            )}
+            </div>
 
             {/* Términos */}
             <div className="form-terms">
@@ -299,12 +315,6 @@ export function RegisterPage() {
           </form>
         </div>
       </div>
-
-      {/* Decoraciones */}
-      <div className="decoration decoration-1">🎓 +120 misiones</div>
-      <div className="decoration decoration-2">🏆 24 islas</div>
-      <div className="decoration decoration-3">⛵ Clase en vivo</div>
-      <div className="decoration decoration-4">🎁 Premios diarios</div>
     </div>
   )
 }

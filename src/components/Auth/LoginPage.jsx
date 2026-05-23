@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuthContext } from '../../context/AuthContext'
-import '../Auth/LoginRegisterStyles.css'
+import './LoginRegisterStyles.css'
 
 export function LoginPage() {
   const navigate = useNavigate()
@@ -13,7 +13,6 @@ export function LoginPage() {
     recordarme: false
   })
   const [localError, setLocalError] = useState(null)
-  const [rol, setRol] = useState('estudiante')
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -43,9 +42,11 @@ export function LoginPage() {
 
   return (
     <div className="login-container">
-      {/* Fondo animado */}
+      {/* Fondo oceanico */}
       <div className="ocean-background">
         <div className="sky"></div>
+        <div className="sea"></div>
+        <div className="sand"></div>
 
         {/* Nubes */}
         <div className="cloud cloud-1"></div>
@@ -60,28 +61,48 @@ export function LoginPage() {
         {/* Palmeras */}
         <div className="palm palm-left">
           <div className="palm-trunk"></div>
-          <div className="palm-leaves"></div>
+          <div className="palm-leaves">
+            <div className="palm-leaf"></div>
+            <div className="palm-leaf"></div>
+            <div className="palm-leaf"></div>
+            <div className="palm-leaf"></div>
+            <div className="palm-leaf"></div>
+          </div>
         </div>
         <div className="palm palm-right">
           <div className="palm-trunk"></div>
-          <div className="palm-leaves"></div>
+          <div className="palm-leaves">
+            <div className="palm-leaf"></div>
+            <div className="palm-leaf"></div>
+            <div className="palm-leaf"></div>
+            <div className="palm-leaf"></div>
+            <div className="palm-leaf"></div>
+          </div>
         </div>
 
-        {/* Bote */}
-        <div className="boat"></div>
+        {/* Velero */}
+        <div className="boat">
+          <div className="boat-mast"></div>
+          <div className="boat-sail"></div>
+          <div className="boat-hull"></div>
+        </div>
 
         {/* Olas */}
-        <div className="wave wave-1"></div>
-        <div className="wave wave-2"></div>
-        <div className="wave wave-3"></div>
-
-        {/* Arena */}
-        <div className="sand"></div>
+        <div className="waves">
+          <div className="wave"></div>
+          <div className="wave"></div>
+        </div>
       </div>
+
+      {/* Badges flotantes */}
+      <div className="badge badge-top-left">📋 +120 misiones</div>
+      <div className="badge badge-bottom-left">⛵ Clase en vivo</div>
+      <div className="badge badge-top-right">🎁 Premios diarios</div>
+      <div className="badge badge-bottom-right">🏆 24 islas</div>
 
       {/* Tarjeta */}
       <div className="card">
-        {/* Personaje arriba */}
+        {/* Personaje */}
         <div className="character-container">
           <img
             src="/src/assets/images/cookie-normal.png"
@@ -100,18 +121,10 @@ export function LoginPage() {
 
           {/* Selector de rol */}
           <div className="role-toggle">
-            <button
-              type="button"
-              className={`role-btn ${rol === 'docente' ? 'active' : ''}`}
-              onClick={() => setRol('docente')}
-            >
+            <button type="button" className="role-btn">
               🎓 Soy Docente
             </button>
-            <button
-              type="button"
-              className={`role-btn ${rol === 'estudiante' ? 'active' : ''}`}
-              onClick={() => setRol('estudiante')}
-            >
+            <button type="button" className="role-btn active">
               📋 Soy Estudiante
             </button>
           </div>
@@ -126,12 +139,11 @@ export function LoginPage() {
           {/* Formulario */}
           <form onSubmit={handleSubmit} className="login-form">
             <div className="form-group">
-              <label htmlFor="email">CORREO</label>
+              <label>CORREO</label>
               <div className="input-wrapper">
                 <span className="input-icon">✉️</span>
                 <input
                   type="email"
-                  id="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
@@ -142,12 +154,11 @@ export function LoginPage() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="password">CONTRASEÑA</label>
+              <label>CONTRASEÑA</label>
               <div className="input-wrapper">
                 <span className="input-icon">🔒</span>
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  id="password"
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
@@ -159,8 +170,9 @@ export function LoginPage() {
                   className="toggle-password"
                   onClick={() => setShowPassword(!showPassword)}
                   disabled={loading}
+                  tabIndex="-1"
                 >
-                  {showPassword ? '👁️' : '👁️‍🗨️'}
+                  👁️
                 </button>
               </div>
             </div>
@@ -198,12 +210,6 @@ export function LoginPage() {
           </p>
         </div>
       </div>
-
-      {/* Elementos decorativos */}
-      <div className="decoration decoration-1">🎓 +120 misiones</div>
-      <div className="decoration decoration-2">🏆 24 islas</div>
-      <div className="decoration decoration-3">⛵ Clase en vivo</div>
-      <div className="decoration decoration-4">🎁 Premios diarios</div>
     </div>
   )
 }
