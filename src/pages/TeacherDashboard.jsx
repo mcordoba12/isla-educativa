@@ -915,7 +915,7 @@ export default function TeacherDashboard() {
         )}
       </main>
 
-      <MascotCorner mascotSrc="/src/assets/images/cookie-normal.png"
+      <MascotCorner mascotSrc="/images/cookie-normal.png"
         message={sessions.length === 0 ? "¡Vamos a crear tu primera expedición! 🌴" : `Tienes ${sessions.length} expedición${sessions.length > 1 ? "es" : ""} 🧭`}/>
 
       {toast && (

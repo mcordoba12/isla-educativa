@@ -226,9 +226,9 @@ export default function LiveSession() {
 
   return (
     <IslaEducativaProyeccion
-      mascotNormal="/src/assets/images/cookie-normal.png"
-      mascotCelebra="/src/assets/images/cookie-celebra.png"
-      mascotTriste="/src/assets/images/cookie-triste.png"
+      mascotNormal="/images/cookie-normal.png"
+      mascotCelebra="/images/cookie-celebra.png"
+      mascotTriste="/images/cookie-triste.png"
       subject={session.titulo}
       topic={session.tema || 'Expedición educativa'}
       characterName="Come Dispersión"

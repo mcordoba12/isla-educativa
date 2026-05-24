@@ -496,9 +496,9 @@ export default function StudentIsland() {
       {/* Componente IslaEducativaEstudiante con misiones (TODAS JUNTAS) */}
       <IslaEducativaEstudiante
         studentName={studentName}
-        mascotNormal="/src/assets/images/cookie-normal.png"
-        mascotCelebra="/src/assets/images/cookie-celebra.png"
-        mascotTriste="/src/assets/images/cookie-triste.png"
+        mascotNormal="/images/cookie-normal.png"
+        mascotCelebra="/images/cookie-celebra.png"
+        mascotTriste="/images/cookie-triste.png"
         missions={missionsWithBadge}
         onAnswer={handleAnswer}
         onLogout={handleLogout}

@@ -127,7 +127,7 @@ export function RegisterPage() {
         {/* Personaje */}
         <div className="character-container">
           <img
-            src="/src/assets/images/cookie-normal.png"
+            src="/images/cookie-normal.png"
             alt="Come Dispersión"
             className="character bounce-soft"
           />

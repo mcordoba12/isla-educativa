@@ -17,9 +17,9 @@
 //
 //   <IslaEducativaEstudiante
 //     studentName="Tomás Quintero"
-//     mascotNormal="/src/assets/images/cookie-normal.png"
-//     mascotCelebra="/src/assets/images/cookie-celebra.png"
-//     mascotTriste="/src/assets/images/cookie-triste.png"
+//     mascotNormal="/images/cookie-normal.png"
+//     mascotCelebra="/images/cookie-celebra.png"
+//     mascotTriste="/images/cookie-triste.png"
 //     missions={[
 //       {
 //         id: "uuid",
@@ -582,9 +582,9 @@ function MissionCard({ mission, onStart, onAnswer }) {
 // ─── Componente principal ─────────────────────────────────────────────────────
 export default function IslaEducativaEstudiante({
   studentName = "Aventurero",
-  mascotNormal = "/src/assets/images/cookie-normal.png",
-  mascotCelebra = "/src/assets/images/cookie-celebra.png",
-  mascotTriste = "/src/assets/images/cookie-triste.png",
+  mascotNormal = "/images/cookie-normal.png",
+  mascotCelebra = "/images/cookie-celebra.png",
+  mascotTriste = "/images/cookie-triste.png",
   missions = [],
   onAnswer,
   onLogout,

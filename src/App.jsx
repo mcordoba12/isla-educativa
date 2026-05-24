@@ -153,7 +153,7 @@ function LoginPage() {
 
   return (
     <IslaEducativaLogin
-      mascotSrc="/src/assets/images/cookie-normal.png"
+      mascotSrc="/images/cookie-normal.png"
       defaultRole="estudiante"
       title="Isla Educativa"
       onLogin={handleLogin}

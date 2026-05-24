@@ -458,9 +458,9 @@ function AnswerButton({ variant, onClick, children }) {
 
 // ─── Componente principal ───────────────────────────────────────────────────
 export default function IslaEducativaProyeccion({
-  mascotNormal  = "/src/assets/images/cookie-normal.png",
-  mascotCelebra = "/src/assets/images/cookie-celebra.png",
-  mascotTriste  = "/src/assets/images/cookie-triste.png",
+  mascotNormal  = "/images/cookie-normal.png",
+  mascotCelebra = "/images/cookie-celebra.png",
+  mascotTriste  = "/images/cookie-triste.png",
   subject        = "Ciencias Naturales",
   topic          = "Los ecosistemas marinos",
   characterName  = "Come Dispersión",

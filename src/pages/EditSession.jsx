@@ -485,7 +485,7 @@ export default function EditSession() {
         </div>
       </main>
 
-      <MascotCorner mascotSrc="/src/assets/images/cookie-normal.png" message={mascotMessage}/>
+      <MascotCorner mascotSrc="/images/cookie-normal.png" message={mascotMessage}/>
 
       {/* Toast */}
       {toast && (
