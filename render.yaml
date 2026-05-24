@@ -5,7 +5,7 @@ services:
     region: oregon
     plan: starter
     buildCommand: npm install && npm run build
-    startCommand: node server.js
+    startCommand: node server.cjs
     envVars:
       - key: VITE_SUPABASE_URL
         scope: build
