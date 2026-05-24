@@ -1,46 +1,44 @@
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
+import { useAuthContext } from '../../context/AuthContext'
 import { useState, useEffect } from 'react'
 import { supabase } from '../../services/supabaseClient'
 
 export function ProtectedRoute({ children, requiredRole = null }) {
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const navigate = useNavigate()
+  const { user, loading } = useAuthContext()
+  const [userRole, setUserRole] = useState(null)
+  const [roleLoading, setRoleLoading] = useState(true)
+  const [hasRequiredRole, setHasRequiredRole] = useState(true)
 
   useEffect(() => {
-    const checkAuth = async () => {
+    const fetchUserRole = async () => {
+      if (!user) {
+        setRoleLoading(false)
+        return
+      }
+
       try {
-        const { data: { user: authUser } } = await supabase.auth.getUser()
+        if (requiredRole) {
+          const { data: userData } = await supabase
+            .from('users')
+            .select('rol')
+            .eq('id', user.id)
+            .single()
 
-        if (!authUser) {
-          navigate('/')
-          return
+          setUserRole(userData?.rol)
+          setHasRequiredRole(userData?.rol === requiredRole)
         }
-
-        // Obtener el rol del usuario desde la tabla users
-        const { data: userData } = await supabase
-          .from('users')
-          .select('rol')
-          .eq('id', authUser.id)
-          .single()
-
-        if (requiredRole && userData?.rol !== requiredRole) {
-          navigate('/')
-          return
-        }
-
-        setUser(authUser)
       } catch (error) {
-        console.error('Error verificando autenticación:', error)
-        navigate('/')
+        console.error('Error verificando rol:', error)
+        setHasRequiredRole(false)
       } finally {
-        setLoading(false)
+        setRoleLoading(false)
       }
     }
 
-    checkAuth()
-  }, [requiredRole, navigate])
+    fetchUserRole()
+  }, [user, requiredRole])
 
+  // Mientras se verifica la sesión
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#87D5EE] to-[#E4F6FB]">
@@ -52,5 +50,27 @@ export function ProtectedRoute({ children, requiredRole = null }) {
     )
   }
 
-  return user ? children : null
+  // Si no hay usuario, redirige a login
+  if (!user) {
+    return <Navigate to="/" replace />
+  }
+
+  // Mientras se verifica el rol
+  if (requiredRole && roleLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#87D5EE] to-[#E4F6FB]">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#1F8FCE] mb-4"></div>
+          <p className="text-[#4E6B7E] font-semibold">Verificando permisos...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Si no tiene el rol requerido, redirige a login
+  if (!hasRequiredRole) {
+    return <Navigate to="/" replace />
+  }
+
+  return children
 }
