@@ -364,11 +364,11 @@ function MissionModal({ mission, mascotNormal, mascotCelebra, mascotTriste, onAn
           </div>
 
           {/* Mascota */}
-          <div className="flex justify-center items-center py-6 min-h-[220px] sm:min-h-[280px]">
+          <div className="flex justify-center w-full">
             <img
               src={mascotSrc}
               alt="Come Dispersión"
-              className={`w-40 h-40 sm:w-52 sm:h-52 object-contain drop-shadow-lg ${mascotAnim}`}
+              className={`w-48 h-48 sm:w-72 sm:h-72 mx-auto object-contain drop-shadow-xl ${mascotAnim}`}
               style={{ transformOrigin: "bottom center" }}
             />
           </div>
