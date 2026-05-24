@@ -4,6 +4,20 @@ import userEvent from '@testing-library/user-event'
 import { BrowserRouter, MemoryRouter } from 'react-router-dom'
 import App from '../../App'
 
+// Mock AuthContext - debe estar ANTES de importar App
+vi.mock('../../context/AuthContext', () => ({
+  useAuthContext: vi.fn(() => ({
+    user: null,
+    loading: false,
+    error: null,
+    isAuthenticated: false,
+    login: vi.fn(),
+    register: vi.fn(),
+    logout: vi.fn()
+  })),
+  AuthProvider: ({ children }) => children
+}))
+
 // Mock Supabase
 vi.mock('../../services/supabaseClient', () => ({
   supabase: {
@@ -49,6 +63,7 @@ vi.mock('../../pages/StudentIsland', () => ({
 }))
 
 import { supabase } from '../../services/supabaseClient'
+import { useAuthContext } from '../../context/AuthContext'
 
 describe('Integration: App Router', () => {
   beforeEach(() => {
