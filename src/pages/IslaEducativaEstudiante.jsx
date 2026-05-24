@@ -368,7 +368,7 @@ function MissionModal({ mission, mascotNormal, mascotCelebra, mascotTriste, onAn
             <img
               src={mascotSrc}
               alt="Come Dispersión"
-              className={`w-32 h-32 sm:w-40 sm:h-40 object-contain drop-shadow-lg ${mascotAnim}`}
+              className={`w-48 h-48 sm:w-64 sm:h-64 object-contain drop-shadow-lg ${mascotAnim}`}
               style={{ transformOrigin: "bottom center" }}
             />
           </div>
