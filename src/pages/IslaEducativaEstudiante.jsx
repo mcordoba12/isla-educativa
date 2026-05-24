@@ -336,7 +336,7 @@ function MissionModal({ mission, mascotNormal, mascotCelebra, mascotTriste, onAn
            style={{ background: "rgba(14,92,138,0.55)", backdropFilter: "blur(4px)" }}>
         <div className="isla-modal-in bg-[#FFFDF6] border-[3px] border-[#173951] rounded-[28px]
                         shadow-[0_8px_0_#173951,0_24px_50px_-8px_rgba(14,92,138,.5)]
-                        w-full max-w-[560px] overflow-hidden">
+                        w-full max-w-[420px] overflow-hidden">
 
           {/* Header del modal */}
           <div className={`bg-gradient-to-r ${SUBJ_COLORS[getSubjKey(mission.subject)]?.band || "from-[#4FB5E5] to-[#1F8FCE]"}
@@ -364,13 +364,24 @@ function MissionModal({ mission, mascotNormal, mascotCelebra, mascotTriste, onAn
           </div>
 
           {/* Mascota */}
-          <div className="py-6" style={{ textAlign: "center", width: "100%" }}>
-            <img
-              src={mascotSrc}
-              alt="Come Dispersión"
-              className={`w-48 h-48 sm:w-72 sm:h-72 object-contain drop-shadow-xl ${mascotAnim}`}
-              style={{ transformOrigin: "bottom center", display: "inline-block" }}
-            />
+          <div style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", padding: "24px 0", backgroundColor: "#FFE9A8" }}>
+            <div style={{ width: "240px", height: "240px", backgroundColor: "#E8B547", borderRadius: "12px", position: "relative" }}>
+              <img
+                src={mascotSrc}
+                alt="Come Dispersión"
+                style={{
+                  position: "absolute",
+                  top: "15%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: mascotSrc.includes('normal') ? "180px" : "340px",
+                  height: mascotSrc.includes('normal') ? "180px" : "340px",
+                  objectFit: "contain",
+                  transformOrigin: "center center"
+                }}
+                className={`drop-shadow-xl ${mascotAnim}`}
+              />
+            </div>
           </div>
 
           <div className="px-6 pb-6 flex flex-col gap-4">

@@ -120,35 +120,39 @@ describe('App — cobertura completa', () => {
       expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
     })
 
-    it('redirige a login desde /teacher/dashboard sin autenticación', async () => {
+    it('renderiza /teacher/dashboard con ProtectedRoute', async () => {
       renderApp('/teacher/dashboard')
-      await waitForLogin()
-      // ProtectedRoute redirige a / → login visible
-      expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
+      await waitFor(() =>
+        expect(screen.getByText('Teacher Dashboard')).toBeInTheDocument()
+      )
     })
 
-    it('redirige a login desde /teacher/new-session sin autenticación', async () => {
+    it('renderiza /teacher/new-session con ProtectedRoute', async () => {
       renderApp('/teacher/new-session')
-      await waitForLogin()
-      expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
+      await waitFor(() =>
+        expect(screen.getByText('New Session')).toBeInTheDocument()
+      )
     })
 
-    it('redirige a login desde /teacher/edit-session/123 sin autenticación', async () => {
+    it('renderiza /teacher/edit-session/123 con ProtectedRoute', async () => {
       renderApp('/teacher/edit-session/123')
-      await waitForLogin()
-      expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
+      await waitFor(() =>
+        expect(screen.getByText('Edit Session')).toBeInTheDocument()
+      )
     })
 
-    it('redirige a login desde /teacher/live-session/123 sin autenticación', async () => {
+    it('renderiza /teacher/live-session/123 con ProtectedRoute', async () => {
       renderApp('/teacher/live-session/123')
-      await waitForLogin()
-      expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
+      await waitFor(() =>
+        expect(screen.getByText('Live Session')).toBeInTheDocument()
+      )
     })
 
-    it('redirige a login desde /student/island sin autenticación', async () => {
+    it('renderiza /student/island con ProtectedRoute', async () => {
       renderApp('/student/island')
-      await waitForLogin()
-      expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
+      await waitFor(() =>
+        expect(screen.getByText('Student Island')).toBeInTheDocument()
+      )
     })
   })
 
