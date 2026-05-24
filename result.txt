@@ -1,0 +1,64 @@
+
+> isla-educativa@0.1.0 test
+> vitest
+
+[2m9:44:08 a. m.[22m [33m[1m[vite][22m[39m [33mwarning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.[39m
+[2m9:44:08 a. m.[22m [33m[1m[vite][22m[39m [33mwarning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.[39m
+[33mBoth esbuild and oxc options were set. oxc options will be used and esbuild options will be ignored.[39m The following esbuild options were set: `{ jsx: 'automatic', jsxImportSource: undefined }`
+
+ RUN  v4.1.7 C:/Users/Angela/Documents/Comegalletas/Comegalletas-ProyectoPedagogico
+
+
+<--- Last few GCs --->
+
+[21540:000001EFB1A11000]  1637811 ms: Mark-Compact 2032.8 (2083.9) -> 2026.2 (2093.0) MB, pooled: 1 MB, 3149.62 / 0.00 ms  (average mu = 0.461, current mu = 0.031) allocation failure; scavenge might not succeed
+[21540:000001EFB1A11000]  1641745 ms: Mark-Compact 2036.1 (2103.0) -> 2029.5 (2096.4) MB, pooled: 1 MB, 3924.09 / 0.00 ms  (average mu = 0.282, current mu = 0.003) allocation failure; scavenge might not succeed
+
+
+<--- JS stacktrace --->
+
+FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+ 1: 00007FF72A3A711D node::SetCppgcReference+17725
+ 2: 00007FF72A30A138 SSL_get_quiet_shutdown+92344
+ 3: 00007FF72AE90C51 v8::Isolate::ReportExternalAllocationLimitReached+65
+ 4: 00007FF72AE7D8D6 v8::Function::Experimental_IsNopFunction+2870
+ 5: 00007FF72ACCAA20 v8::internal::StrongRootAllocatorBase::StrongRootAllocatorBase+31456
+ 6: 00007FF72ACC7A8A v8::internal::StrongRootAllocatorBase::StrongRootAllocatorBase+19274
+ 7: 00007FF72ACDD2E1 v8::Isolate::GetHeapProfiler+7793
+ 8: 00007FF72ACDDB88 v8::Isolate::GetHeapProfiler+10008
+ 9: 00007FF72ACE8DF1 v8::Isolate::GetHeapProfiler+55681
+10: 00007FF72ACFC7CC v8::Isolate::GetHeapProfiler+136028
+11: 00007FF72AB840E4 v8::MemorySpan<std::basic_string_view<char,std::char_traits<char> > const >::end+1111108
+12: 00007FF72AB9D2BC v8::Context::GetIsolate+12828
+13: 00007FF72A9C743B v8::base::AddressSpaceReservation::AddressSpaceReservation+386859
+14: 00007FF72AF4BFEE v8::PropertyDescriptor::writable+725966
+15: 00007FF6AB53DA20 
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Worker forks emitted error.
+ ❯ EventEmitter.<anonymous> node_modules/vitest/dist/chunks/cli-api.C6CiCDM3.js:3446:22
+ ❯ EventEmitter.emit node:events:518:28
+ ❯ ChildProcess.emitUnexpectedExit node_modules/vitest/dist/chunks/cli-api.C6CiCDM3.js:3013:22
+ ❯ ChildProcess.emit node:events:518:28
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:293:12
+
+Caused by: Error: Worker exited unexpectedly
+ ❯ ChildProcess.emitUnexpectedExit node_modules/vitest/dist/chunks/cli-api.C6CiCDM3.js:3012:33
+ ❯ ChildProcess.emit node:events:518:28
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:293:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  22 passed (23)
+      Tests  581 passed (583)
+     Errors  1 error
+   Start at  09:44:10
+   Duration  1768.52s (transform 76.18s, setup 97.84s, import 109.72s, tests 266.10s, environment 655.52s)
+
