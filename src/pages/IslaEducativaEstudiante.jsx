@@ -364,7 +364,7 @@ function MissionModal({ mission, mascotNormal, mascotCelebra, mascotTriste, onAn
           </div>
 
           {/* Mascota */}
-          <div className="flex justify-center items-center w-full py-6">
+          <div className="flex justify-center items-center w-full px-6 py-6">
             <img
               src={mascotSrc}
               alt="Come Dispersión"
