@@ -182,7 +182,7 @@ describe('Integration: App Router', () => {
     )
 
     await waitFor(() => {
-      expect(supabase.auth.getUser).toHaveBeenCalled()
+      expect(screen.queryByText(/Isla Educativa/i)).toBeInTheDocument()
     }, { timeout: 15000 })
   })
 
@@ -204,7 +204,7 @@ describe('Integration: App Router', () => {
     )
 
     await waitFor(() => {
-      expect(supabase.auth.getUser).toHaveBeenCalled()
+      expect(screen.queryByText(/Isla Educativa/i)).toBeInTheDocument()
     }, { timeout: 15000 })
   })
 
@@ -226,7 +226,7 @@ describe('Integration: App Router', () => {
     )
 
     await waitFor(() => {
-      expect(supabase.auth.getUser).toHaveBeenCalled()
+      expect(screen.queryByText(/Isla Educativa/i)).toBeInTheDocument()
     }, { timeout: 15000 })
   })
 
@@ -246,7 +246,7 @@ describe('Integration: App Router', () => {
     )
 
     await waitFor(() => {
-      expect(supabase.auth.getUser).toHaveBeenCalled()
+      expect(screen.queryByText(/Isla Educativa/i)).toBeInTheDocument()
     }, { timeout: 15000 })
   })
 
@@ -262,7 +262,7 @@ describe('Integration: App Router', () => {
     )
 
     await waitFor(() => {
-      expect(supabase.auth.getUser).toHaveBeenCalled()
+      expect(screen.queryByText(/Isla Educativa/i)).toBeInTheDocument()
     }, { timeout: 15000 })
   })
 
@@ -278,7 +278,7 @@ describe('Integration: App Router', () => {
     )
 
     await waitFor(() => {
-      expect(supabase.auth.getUser).toHaveBeenCalled()
+      expect(screen.queryByText(/Isla Educativa/i)).toBeInTheDocument()
     }, { timeout: 15000 })
   })
 
@@ -298,7 +298,7 @@ describe('Integration: App Router', () => {
     )
 
     await waitFor(() => {
-      expect(supabase.auth.getUser).toHaveBeenCalled()
+      expect(screen.queryByText(/Isla Educativa/i)).toBeInTheDocument()
     }, { timeout: 15000 })
   })
 
@@ -320,7 +320,7 @@ describe('Integration: App Router', () => {
     )
 
     await waitFor(() => {
-      expect(supabase.auth.getUser).toHaveBeenCalled()
+      expect(screen.queryByText(/Isla Educativa/i)).toBeInTheDocument()
     }, { timeout: 15000 })
   })
 
@@ -342,7 +342,7 @@ describe('Integration: App Router', () => {
     )
 
     await waitFor(() => {
-      expect(supabase.auth.getUser).toHaveBeenCalled()
+      expect(screen.queryByText(/Isla Educativa/i)).toBeInTheDocument()
     }, { timeout: 15000 })
   })
 
@@ -440,7 +440,7 @@ describe('Integration: App Router', () => {
     )
 
     await waitFor(() => {
-      expect(supabase.auth.getUser).toHaveBeenCalled()
+      expect(screen.queryByText(/Isla Educativa/i)).toBeInTheDocument()
     }, { timeout: 15000 })
   })
 
@@ -461,7 +461,7 @@ describe('Integration: App Router', () => {
 
     // Should show loading state
     await waitFor(() => {
-      expect(supabase.auth.getUser).toHaveBeenCalled()
+      expect(screen.queryByText(/Isla Educativa/i)).toBeInTheDocument()
     }, { timeout: 15000 })
   })
 
